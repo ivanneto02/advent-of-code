@@ -8,8 +8,75 @@ def main():
     print("Part2 impr1: ", part2())
 
     print("Part1 impr2: ", part1impr2())
-    print("Part2 impr2: ", part2impr2())
+    print("Part2 impr2: ", part2impr2(), "\n")
+
+    # print("Part1 linear: ", part1impr2())
+    print("Part2 linear: ", part2linear())
     return 0
+
+def part2linearrec(size, nums):
+    if (len(nums) <= 3):
+        # test inc
+        test1 = nums[0] < nums[1] < nums[2]
+        # test dec
+        test2 = nums[0] > nums[1] > nums[2]
+        # test dif
+        test3 = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(nums, nums[1:]))
+
+        # identify the errors for test3
+        errors = [0] + [ int(abs(r - l) > 3 or abs(r - l) < 1) for l,r in zip(nums, nums[1:]) ]
+
+        if not ((test1 or test2) and test3):
+            # print(abs(nums[0] - nums[1]))
+            # print(abs(nums[1] - nums[2]))
+            # print(test1, test2, test3)
+            print(errors)
+
+            works = True
+            for i in range(0, len(errors)):
+                if (errors[i] == 1):
+                    # Take out a number
+                    updated_nums = nums[:i] + nums[i+1:]
+                    print("u", updated_nums)
+                    # test inc
+                    test1o = updated_nums[0] < updated_nums[1]
+                    # test dec
+                    test2o = updated_nums[0] > updated_nums[1]
+                    # test dif
+                    test3o = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(updated_nums, updated_nums[1:]))
+                    if not ((test1o or test2o) and test3o):
+                        works = False
+
+            if (works):
+                return True
+            return False
+
+        return True
+        
+    else:
+        # get windows
+        windows = [ nums[i:i+size] for i in range(len(nums) - size + 1) ]
+        for window in windows:
+            if not part2linearrec(size - 1, window):
+                return False
+        return True
+
+def part2linear():
+    f = open("test.txt")
+
+    sum = 0
+    
+    for line in f:
+        nums = list(map(int, line.split(" ")))
+        print(nums, end=" ")
+
+        if (part2linearrec(len(nums), nums)):
+            print("SAFE\n")
+            sum += 1
+        else:
+            print("UNSAFE\n")
+
+    return sum
 
 # My final answer :)
 def part1impr2():
