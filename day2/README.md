@@ -1,4 +1,4 @@
-# Day 3
+# Day 2
 
 Final answer in Python:
 
