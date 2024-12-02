@@ -8,7 +8,7 @@ def main():
     print("Part2 impr1: ", part2())
 
     print("Part1 impr2: ", part1impr2())
-    print("Part2 impr2: ", part2())
+    print("Part2 impr2: ", part2impr2())
     return 0
 
 # My final answer :)
@@ -23,6 +23,28 @@ def part1impr2():
         sum += 1 if ((test1 or test2) and test3) else 0
 
     return sum
+
+def part2impr2():
+    f = open("main.txt")
+
+    sum = 0
+    for nums in [ list(map(int, x.split(" "))) for x in f ]:
+        test1 = all(l < r for l,r in zip(nums, nums[1:])) # inc
+        test2 = all(l > r for l,r in zip(nums, nums[1:])) # dec
+        test3 = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(nums, nums[1:]))
+        sum += 1 if ((test1 or test2) and test3) else removeOneAndCheck(nums)
+
+    return sum
+
+def removeOneAndCheck(nums):
+    for i in range(0, len(nums)):
+        newNums = [ nums[j] for j in range(0, len(nums)) if i != j ]
+        test1 = all(l < r for l,r in zip(newNums, newNums[1:])) # inc
+        test2 = all(l > r for l,r in zip(newNums, newNums[1:])) # dec
+        test3 = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(newNums, newNums[1:]))
+        if ((test1 or test2) and test3): return 1
+    
+    return 0
 
 def part1impr1():
 
