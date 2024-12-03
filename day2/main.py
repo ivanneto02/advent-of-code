@@ -14,53 +14,6 @@ def main():
     print("Part2 linear: ", part2linear())
     return 0
 
-def part2linearrec(size, nums):
-    if (len(nums) <= 3):
-        # test inc
-        test1 = nums[0] < nums[1] < nums[2]
-        # test dec
-        test2 = nums[0] > nums[1] > nums[2]
-        # test dif
-        test3 = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(nums, nums[1:]))
-
-        # identify the errors for test3
-        errors = [0] + [ int(abs(r - l) > 3 or abs(r - l) < 1) for l,r in zip(nums, nums[1:]) ]
-
-        if not ((test1 or test2) and test3):
-            # print(abs(nums[0] - nums[1]))
-            # print(abs(nums[1] - nums[2]))
-            # print(test1, test2, test3)
-            print(errors)
-
-            works = True
-            for i in range(0, len(errors)):
-                if (errors[i] == 1):
-                    # Take out a number
-                    updated_nums = nums[:i] + nums[i+1:]
-                    print("u", updated_nums)
-                    # test inc
-                    test1o = updated_nums[0] < updated_nums[1]
-                    # test dec
-                    test2o = updated_nums[0] > updated_nums[1]
-                    # test dif
-                    test3o = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(updated_nums, updated_nums[1:]))
-                    if not ((test1o or test2o) and test3o):
-                        works = False
-
-            if (works):
-                return True
-            return False
-
-        return True
-        
-    else:
-        # get windows
-        windows = [ nums[i:i+size] for i in range(len(nums) - size + 1) ]
-        for window in windows:
-            if not part2linearrec(size - 1, window):
-                return False
-        return True
-
 def part2linear():
     f = open("test.txt")
 
@@ -70,11 +23,66 @@ def part2linear():
         nums = list(map(int, line.split(" ")))
         print(nums, end=" ")
 
-        if (part2linearrec(len(nums), nums)):
-            print("SAFE\n")
+        inc = False
+        dec = False
+
+        aborted = False
+
+        # go through all nums to check for inc
+        if not all( l < r for l,r in zip(nums, nums[1:]) ):
+            aborted = True
+            continue
+
+        # go through all nums to check for dec
+        if not all( r < l for l,r in zip(nums, nums[1:]) ):
+            aborted = True
+            continue
+            
+        fixed_one = False # tracks whether we have fixed a number once already
+        for l,m,r in zip(nums, nums[1:], nums[2:]): # iterate over all 3-sized windows
+            # inc test
+            test1 = l < m < r
+            # dec test
+            test2 = l > m > r
+            # sums test
+            diff1 = abs(l - m)
+            diff2 = abs(m - r)
+            test3 = ((diff1 < 1 or diff1 > 3) or (diff2 < 1 or diff2 > 3))
+
+            # failure
+            if (not test1 and not test2) or test3:
+                print("fixing failure")
+                # if failure happens and we have already fixed, move on
+                if fixed_one:
+                    print("already fixed, move on")
+                    aborted = True
+                    break # already fixed an error, early abort for current nums
+                
+                # failure happens first time, try to fix
+                # remove 1st val
+                print(m, r)
+                if   (((m < r) or (m > r)) and (abs(m - r) <= 3 and abs(m - r) >= 1)):
+                    print("Found fix1")
+                    fixed_one = True
+                    continue  # found a fix
+                # remove 2nd val
+                elif (((l < r) or (l > r)) and (abs(l - r) <= 3 and abs(l - r) >= 1)):
+                    print("Found fix2")
+                    fixed_one = True
+                    continue # no sum added
+                # remove 3rd val
+                elif (((l < m) or (l > m)) and (abs(l - m) <= 3 and abs(l - m) >= 1)):
+                    print("Found fix3")
+                    fixed_one = True
+                    continue # no sum added
+                else: # we could not find a fix, early abort for current nums
+                    aborted = True
+                    break
+        if not aborted: # if there was no early abort, we can assume it is safe!
+            print("SAFE")
             sum += 1
-        else:
-            print("UNSAFE\n")
+            continue
+        print("UNSAFE")
 
     return sum
 
