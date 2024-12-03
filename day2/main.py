@@ -4,85 +4,58 @@ def main():
     print("Part1 orig: ", part1original())
     print("Part2 orig: ", part2original(), "\n")
 
-    print("Part1 impr1: ", part1impr1())
-    print("Part2 impr1: ", part2())
-
+    print("Part1 impr1: ", part1impr1(), "\n")
+    
     print("Part1 impr2: ", part1impr2())
     print("Part2 impr2: ", part2impr2(), "\n")
 
     # print("Part1 linear: ", part1impr2())
-    print("Part2 linear: ", part2linear())
+    print("Part2 linear: ", part2linear(), "NOT DONE")
     return 0
 
-def part2linear():
+def safe(nums):
+    test1 = all(l < r for l,r in zip(nums, nums[1:])) # inc
+    test2 = all(l > r for l,r in zip(nums, nums[1:])) # dec
+    test3 = all( (abs(r - l) <= 3 and abs(r - l) >= 1) for l,r in zip(nums, nums[1:]) )
+    return (test1 or test2) and test3
+
+def part2linear(): # TODO
     f = open("test.txt")
 
     sum = 0
-    
     for line in f:
         nums = list(map(int, line.split(" ")))
-        print(nums, end=" ")
+        # print(nums, end=" ")
 
-        inc = False
-        dec = False
-
-        aborted = False
-
-        # go through all nums to check for inc
-        if not all( l < r for l,r in zip(nums, nums[1:]) ):
-            aborted = True
-            continue
-
-        # go through all nums to check for dec
-        if not all( r < l for l,r in zip(nums, nums[1:]) ):
-            aborted = True
-            continue
-            
-        fixed_one = False # tracks whether we have fixed a number once already
-        for l,m,r in zip(nums, nums[1:], nums[2:]): # iterate over all 3-sized windows
-            # inc test
-            test1 = l < m < r
-            # dec test
-            test2 = l > m > r
-            # sums test
-            diff1 = abs(l - m)
-            diff2 = abs(m - r)
-            test3 = ((diff1 < 1 or diff1 > 3) or (diff2 < 1 or diff2 > 3))
-
-            # failure
-            if (not test1 and not test2) or test3:
-                print("fixing failure")
-                # if failure happens and we have already fixed, move on
-                if fixed_one:
-                    print("already fixed, move on")
-                    aborted = True
-                    break # already fixed an error, early abort for current nums
-                
-                # failure happens first time, try to fix
-                # remove 1st val
-                print(m, r)
-                if   (((m < r) or (m > r)) and (abs(m - r) <= 3 and abs(m - r) >= 1)):
-                    print("Found fix1")
-                    fixed_one = True
-                    continue  # found a fix
-                # remove 2nd val
-                elif (((l < r) or (l > r)) and (abs(l - r) <= 3 and abs(l - r) >= 1)):
-                    print("Found fix2")
-                    fixed_one = True
-                    continue # no sum added
-                # remove 3rd val
-                elif (((l < m) or (l > m)) and (abs(l - m) <= 3 and abs(l - m) >= 1)):
-                    print("Found fix3")
-                    fixed_one = True
-                    continue # no sum added
-                else: # we could not find a fix, early abort for current nums
-                    aborted = True
-                    break
-        if not aborted: # if there was no early abort, we can assume it is safe!
-            print("SAFE")
+        # O(n) - Check safety
+        if safe(nums): # Safe first try
             sum += 1
-            continue
-        print("UNSAFE")
+            continue    
+        
+        # Not safe
+
+        # O(n) - Find instance of err
+        i = 0
+
+        # l = i + 0
+        # m = i + 1
+        # r = i + 2
+        for l,m,r in zip(nums, nums[1:], nums[2:]):
+            # Find the diffs first
+            dif1 = abs(l - m)
+            dif2 = abs(m - r)
+            test1 = (dif1 <= 3 and dif1 >= 1)
+            test2 = (dif2 <= 3 and dif2 >= 1)
+
+            if not test1:
+                if l > m:
+                    None
+
+        # O(1) - Remove error item
+
+        # O(n) - Check safety
+        # if safe(updated_nums): # Safe second try
+            # sum += 1
 
     return sum
 

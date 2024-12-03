@@ -14,11 +14,29 @@ I did okay, but took significantly longer than day1. For the solution, my first 
 
 Final solution: [./day2](./day2)
 
+# Day 3
+
+Part 1 was easy, but I really dropped the ball on part 2! It took me a whole **2 hours** to finish it. However, it was mostly because my experience with Regex is a little shaky. I was able to get a regex that removed everything between a `don't()` and a `do()`, including multiple predicate `don't()`'s.
+
+The problems were the following:
+
+1. I was not deleting characters like `\t`, `\n`, `\r\n` before actually removing the strings. I promptly fixed that up.
+2. My regex was not removing a `don't()` followed by `.*` followed by `EOF`. So I added `(?:do\(\)|$)` at the end of my regex to handle that.
+
+It took about 10 attempts.
+
+Final two regex removals:
+```python
+res = re.sub(r"\n|\t|\r\n", " ", x)
+res = re.sub(r"don't\(\).*?(?:do\(\)|$)", "BUFF", res)
+```
+
 # Timekeeping
 
 ```
-      -------Part 1--------   -------Part 2--------
-Day       Time  Rank  Score       Time  Rank  Score
-  2   00:18:17  6285      0   00:36:39  5637      0
-  1   00:11:44  4791      0   00:29:48  6691      0
+      -------Part 1--------   --------Part 2--------
+Day       Time  Rank  Score       Time   Rank  Score
+  3   00:10:05  4212      0   02:18:46  18641      0
+  2   00:18:17  6285      0   00:36:39   5637      0
+  1   00:11:44  4791      0   00:29:48   6691      0
 ```
