@@ -31,6 +31,8 @@ res = re.sub(r"\n|\t|\r\n", " ", x)
 res = re.sub(r"don't\(\).*?(?:do\(\)|$)", "BUFF", res)
 ```
 
+Final solution: [./day3](./day3)
+
 # Timekeeping
 
 ```
