@@ -33,12 +33,36 @@ res = re.sub(r"don't\(\).*?(?:do\(\)|$)", "BUFF", res)
 
 Final solution: [./day3](./day3)
 
+# Day 4
+
+Today was ROUGH because I did not know about Python's strides capabilities. But overall I really enjoyed the problems and learned A LOT about how to grid search for words. I will definitely be using this knowledge for problems in the future.
+
+Part 1 required understanding strides and how to grab a stubstring by non contiguous index.
+
+Part 2 required the same knowledge but applied in a different way. After understanding how strides work, it was basically problem solving :)
+
+---
+
+**Credit:** [Ben](https://gist.github.com/TheThirdOne) and [Bradley](https://gist.github.com/bradleymoore111/) for helping me with their approach!
+
+---
+
+Final solution: [./day4](./day4)
+
+# Day 5
+
+Today was actually great. I started a day late because I did day4 very late. Figuring out the actual brute force solution was quick, and I don't think it was too inefficient because of early abort in part1. In part2, it was efficient because the algorithm did not require me to iterate through each item in update in an O(n^2) complexity.
+
+Final solution: [./day5](./day5)
+
 # Timekeeping
 
 ```
-      -------Part 1--------   --------Part 2--------
-Day       Time  Rank  Score       Time   Rank  Score
-  3   00:10:05  4212      0   02:18:46  18641      0
-  2   00:18:17  6285      0   00:36:39   5637      0
-  1   00:11:44  4791      0   00:29:48   6691      0
+      --------Part 1--------   --------Part 2--------
+Day       Time   Rank  Score       Time   Rank  Score
+  5       >24h  73915      0       >24h  64489      0
+  4       >24h  83612      0       >24h  76829      0
+  3   00:10:05   4212      0   02:18:46  18641      0
+  2   00:18:17   6285      0   00:36:39   5637      0
+  1   00:11:44   4791      0   00:29:48   6691      0
 ```
