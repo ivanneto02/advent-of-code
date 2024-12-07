@@ -33,8 +33,6 @@ def found_guard(screen):
         if (s == "^" or s ==">" or s =="<" or s =="v"): return i, s
     return -1, -1
 
-# Brute force: stride in the direction the guard is facing. Find where # appears (or len if not there). Fill all spots with X, regardless of
-# what is there. Once the guard leaves, the input will have X's. Count the X's to get the number of distinct spots.
 def part1():
 
     f = open("test.txt").read() # get input
@@ -55,16 +53,16 @@ def part1():
 
 def part2():
 
-    f = open("test.txt").read() # get input
+    f = open("main.txt").read() # get input
     length = f.find("\n") # total length of row, including \n
     f = list(f) # list because I want to be able to assign single values within the string
-
-    print("".join(f), end="\n\n")
+    f2 = list(f)
 
     path = []
     # Iterate to create a path that we will iterate through so that
     # we do not need to iterate n times again
     i, guard = found_guard(f) # initial guard position
+
     # iterate while we have found the guard so far
     while (guard):
         # determine which way to move, update f, guard, and string
@@ -76,31 +74,26 @@ def part2():
 
     sum = 0
     # iterate while we have found the guard so far
-    for j in range(0, len(f)):
-        newf = list("".join(f))
-        i, guard = found_guard(f) # initial guard position
-        if newf[j] == "\n" or i == j or newf[j] == "#": continue
+    for j in list(set(path)):
+        newf = list("".join(f2))
+        i, guard = found_guard(newf) # initial guard position
+        if (newf[j] == "\n") or (i == j) or (newf[j] == "#"):
+            continue
         newf[j] = "#"
 
         point_map = {}
         while (True):
-            # determine which way to move, update f, guard, and string
+            if not i: break
             if   guard == "^": newf, guard, i = move_up(newf, length, i)
             elif guard == ">": newf, guard, i = move_right(newf, i)
             elif guard == "<": newf, guard, i = move_left(newf, i)
             elif guard == "v": newf, guard, i = move_down(newf, length, i)
-
-            if not guard: break
-
-            if i not in point_map:
-                point_map[i] = 1
+            if i not in point_map: point_map[i] = 1
             else:
-                if point_map[i] > 5:
-                    print("".join(newf), end="\n\n")
-                    sum += 1; break
+                if (point_map[i] > 4):
+                    sum += 1
+                    break
                 point_map[i] += 1
-
-        # print("".join(newf), end="\n\n")
 
     # return the sum of all possible obstructions
     return sum
