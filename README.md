@@ -59,13 +59,20 @@ Final solution: [./day5](./day5)
 
 Today was okay. I was able to get an efficient solution for part 1 quickly. But, for part 2, I am stuck with a slow solution. It is a pseudo cycle detection by using a map and looking whether the box has been traversed more than twice. In almost all cases, this means it is a cycle. I will probably implement DFS for a proper cycle detection solution.
 
-Final solution: [./day5](./day5)
+Final solution: [./day6](./day6)
+
+# Day 7
+
+Today was okay as well. I think the trick was knowing that breadth-first-search graph-based search could work. It was a little slow, maybe a better search algorithm like A* would work better. Part 2 was slow with breadth-first search so I implemented depth-first search. I was also able to catch up today :)
+
+Final solution: [./day7](./day7)
 
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+  7   02:54:17  14085      0   03:27:13  14005      0
   6   19:21:55  61712      0       >24h  44174      0
   5       >24h  73915      0       >24h  64489      0
   4       >24h  83612      0       >24h  76829      0
