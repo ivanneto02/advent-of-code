@@ -122,7 +122,7 @@ def part2():
     return sum
 ```
 
-## Extra - Breadth-First Search
+## First Try - Breadth-First Search
 
 It was really slow so I opted for depth-first instead
 
