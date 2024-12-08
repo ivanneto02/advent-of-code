@@ -67,11 +67,24 @@ Today was okay as well. I think the trick was knowing that breadth-first-search 
 
 Final solution: [./day7](./day7)
 
+# Day 8
+
+It took me a while to get the solution for part 1 because I misunderstood the prompt. I thought that the "distance" between the two antennas corresponds to the raw number of points in between, not the x and y distance. Thus, I was placing too many antinodes where they would have been out of bounds. After fixing this issue, I got correct answers. I was going to change my code to have a grid-based solution but I opted for a stream of characters instead.
+
+---
+
+**Credit:** [Ben](https://gist.github.com/TheThirdOne) and [Bradley](https://gist.github.com/bradleymoore111/) for helping me with their approach!
+
+---
+
+Final solution: [./day8](./day8)
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+  8   03:14:34  13582      0   04:06:18  14188      0
   7   02:54:17  14085      0   03:27:13  14005      0
   6   19:21:55  61712      0       >24h  44174      0
   5       >24h  73915      0       >24h  64489      0
