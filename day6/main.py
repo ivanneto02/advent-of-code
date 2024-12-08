@@ -1,3 +1,4 @@
+from tqdm import tqdm
 
 def main():
     print("Part1: ", part1())
@@ -35,7 +36,7 @@ def found_guard(screen):
 
 def part1():
 
-    f = open("test.txt").read() # get input
+    f = open("main.txt").read() # get input
     length = f.find("\n") # total length of row, including \n
     f = list(f) # list because I want to be able to assign single values within the string
 
@@ -74,7 +75,7 @@ def part2():
 
     sum = 0
     # iterate while we have found the guard so far
-    for j in list(set(path)):
+    for j in tqdm(list(set(path))):
         newf = list("".join(f2))
         i, guard = found_guard(newf) # initial guard position
         if (newf[j] == "\n") or (i == j) or (newf[j] == "#"):
