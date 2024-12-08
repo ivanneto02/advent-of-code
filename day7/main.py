@@ -79,7 +79,7 @@ def part1():
 # we reach a leaf node where the evaluated expression contains
 # the value that we should compare against the test. If it is not
 # equal to the test, we just keep looking.
-# def part2(): # NOTE: THIS SOLUTION IS SO SLOW, I AM GOING TO TRY DEPTH-FIRST
+# def part2try1(): # NOTE: THIS SOLUTION IS SO SLOW, I AM GOING TO TRY DEPTH-FIRST
 
 #     f = open("main.txt").read()
 #     equations = f.split("\n")
