@@ -83,6 +83,14 @@ Final solution: [./day8](./day8)
 
 (4:53 AM). Today was painful. I had an issue with part 1 where I was only taking single-digit numbers into account. After fixing up the issue, I was able to get the right answer. Part 2 was a bit more complicated but nothing insane. It is quadratic complexity, so it takes about 15 seconds to run. However both solutions are pretty straightforward, and involves first creating the "representation" array, then using two different algorithms to move the file blocks to the left.
 
+---
+
+**Credit:** [Ben](https://gist.github.com/TheThirdOne) and [Bradley](https://gist.github.com/bradleymoore111/) for helping me with their approach!
+
+---
+
+Final solution: [./day9](./day9)
+
 # Timekeeping
 
 ```
