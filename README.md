@@ -79,11 +79,16 @@ It took me a while to get the solution for part 1 because I misunderstood the pr
 
 Final solution: [./day8](./day8)
 
+# Day 9
+
+(4:53 AM). Today was painful. I had an issue with part 1 where I was only taking single-digit numbers into account. After fixing up the issue, I was able to get the right answer. Part 2 was a bit more complicated but nothing insane. It is quadratic complexity, so it takes about 15 seconds to run. However both solutions are pretty straightforward, and involves first creating the "representation" array, then using two different algorithms to move the file blocks to the left.
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+  9   03:15:10  14920      0   07:48:58  16695      0
   8   03:14:34  13582      0   04:06:18  14188      0
   7   02:54:17  14085      0   03:27:13  14005      0
   6   19:21:55  61712      0       >24h  44174      0
