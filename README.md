@@ -91,11 +91,18 @@ Final solution: [./day8](./day8)
 
 Final solution: [./day9](./day9)
 
+# Day 10: :christmas_tree: :santa: :tada:
+
+Today was pretty straightforward. It was clearly a search problem, and I think I could have used any type of searching algorithm. I opted for Depth-First Search since I have experience with it and I find the recursive solution pretty clean. For part 1, it required stopping when reaching the first 9 since we are counting that as a single score. For part 2, it required continuing even after finding the 9, because we want to count all the possible paths from 0 to 9.
+
+Final solution: [./day10](./day10)
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+ 10   04:45:43  19265      0   04:56:24  18547      0
   9   03:15:10  14920      0   07:48:58  16695      0
   8   03:14:34  13582      0   04:06:18  14188      0
   7   02:54:17  14085      0   03:27:13  14005      0
