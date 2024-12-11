@@ -97,11 +97,26 @@ Today was pretty straightforward. It was clearly a search problem, and I think I
 
 Final solution: [./day10](./day10)
 
+# Day 11: :racing_car:
+
+Today was pretty tough, but very rewarding. I learned a lot about the speed advantage of using dictionaries as opposed to regular lists. My solution went from potentially taking hours, being optimized to take milliseconds. I timed part 1, part 2, and a bonus (x10000 blinks):
+
+```
+Part 1: 203953                (12.5060ms)
+Part 2: 242090118578155       (91.0668ms)
+Bonus (x10000) 13640739...    (33697.892189ms)
+```
+
+The solution involved storing every newly discovered value into a dictionary where the key is the number on the stone, and the value is its count.
+
+Final solution: [./day11](./day11)
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+ 11   01:57:30  13577      0   05:37:54  16298      0
  10   04:45:43  19265      0   04:56:24  18547      0
   9   03:15:10  14920      0   07:48:58  16695      0
   8   03:14:34  13582      0   04:06:18  14188      0
