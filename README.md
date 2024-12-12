@@ -111,11 +111,20 @@ The solution involved storing every newly discovered value into a dictionary whe
 
 Final solution: [./day11](./day11)
 
+# Day 12: 
+
+Today was pretty tough again. I unfortunately had trouble with both parts, though part 2 came a little easier. The way it works for part 1 is (1) I identify all of the regions in the graph by running Depth-First Search on every unexplored node (and DFS does the job of exploring them as well), (2) then for every group I count all of the nodes that have neighbors in the grid that are not the same character, with the function `calculate_perimeter(grid, group)`. Adding those all up results in the correct pricing answer.
+
+For part 2, it was similar, except now we are using my utility `calculate_sides(grid, group)`. Instead of counting each neighbor that is not the same character as the group, I run an algorithm that iterates over the entire grid. I detect the number of contiguous in-group same-letter characters that have an unrelated neighbor. I concluded that running this same algorithm top to bottom, bottom to top, left to right, and right to left, would correctly give me the number of sides. Thus, I ran the algorithm 4 times to calculate the sides.
+
+I think the difficulty in today was the edge cases...
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+ 12   02:58:33  11983      0   04:46:49   8154      0
  11   01:57:30  13577      0   05:37:54  16298      0
  10   04:45:43  19265      0   04:56:24  18547      0
   9   03:15:10  14920      0   07:48:58  16695      0

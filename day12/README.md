@@ -1,3 +1,10 @@
+# Day 12
+
+Final answer in Python:
+
+## Utilities:
+
+```python
 import sys
 import time
 from tqdm import tqdm
@@ -82,20 +89,6 @@ def dfs(grid, i, j):
             if next_pt.val == point.val and not next_pt.explored:
                 next_pt.explore(); stack.append(next_pt); points.append(next_pt)
 
-    return points
-
-def main():
-    n = len(sys.argv)
-
-    fname = "test.txt"
-    if n > 1: fname = sys.argv[1]
-
-    p1 = part1(fname)
-    p2 = part2(fname)
-
-    print(f"Part1: {p1[1]} ({p1[0]*1000}ms)")
-    print(f"Part1: {p2[1]} ({p2[0]*1000}ms)")
-
 # Look at all 4 possible spots, 
 def neighbors(grid, point, h, w):
 
@@ -125,39 +118,11 @@ def calculate_perimeter(grid, group, h, w):
             elif neighbor.val != point.val: perimeter += 1
     return perimeter
 
-@timing
-def part1(fname):
-
-    # create a grid with the points
-    f = open(fname).read()
-    grid = f.split("\n")
-    grid = [ list(x) for x in grid ]
-    height = len(grid)
-    width = len(grid[0])
-    grid = Grid(grid)
-
-    groups = []
-
-    # Run BFS for every point, find all the known points and add them all to each group if it hasn't been explored
-    for j in tqdm(range(len(grid.points))):
-        for i in range(len(grid.points[0])):
-            if not grid.points[j][i].explored:
-                group_points = dfs(grid, i, j)
-                groups.append(group_points)
-
-    areas = []
-    for group in groups:
-        areas.append(len(group))
-
-    perimeters = []
-    for group in groups:
-        perimeters.append(calculate_perimeter(grid, group, height, width))
-
-    return sum([s*m for s,m in zip(areas, perimeters)])
-
+# Determines if the neighbor is not part of the group
 def unrelated_neighbor(point, neighbor):
     return neighbor == None or point.val != neighbor.val
 
+# iterate through grid to find the sides
 def calculate_sides(grid, group, height, width):
 
     sides = 0
@@ -198,74 +163,45 @@ def calculate_sides(grid, group, height, width):
         grid.points = grid.points[::-1]
     
     return sides
+```
 
-# def calculate_sides(grid, group, height, width):
-#     sides = 0
-#     val = group[0].val
+## Part 1:
 
-#     for i in range(width):
-#         count, found = 0, False
-#         for j in range(height):
-#             point, neighbor = grid.points[j][i], None
-#             if (i - 1 >= 0): neighbor = grid.points[j][i - 1]
-#             if not found:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor):
-#                     found = True; count += 1
-#             else:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor): continue
-#                 else: found = False
-#         sides += count
+```python
+@timing
+def part1(fname):
 
-#     for i in range(width - 1, -1, -1):
-#         count, found = 0, False
-#         for j in range(height):
-#             point, neighbor = grid.points[j][i], None
-#             if (i + 1 < width): neighbor = grid.points[j][i + 1]
-#             if not found:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor):
-#                     found = True; count += 1
-#                 # else:
-#                 #     found = False; count += 1
-#             else:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor): continue
-#                 else: found = False
-#         sides += count
+    # create a grid with the points
+    f = open(fname).read()
+    grid = f.split("\n")
+    grid = [ list(x) for x in grid ]
+    height = len(grid)
+    width = len(grid[0])
+    grid = Grid(grid)
 
+    groups = []
 
-#     for j in range(height):
-#         count, found = 0, False
-#         for i in range(width):
-#             point, neighbor = grid.points[j][i], None
-#             if (j - 1 >= 0): neighbor = grid.points[j - 1][i]
-#             if not found:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor):
-#                     found = True; count += 1
-#                 # else:
-#                 #     found = False; count += 1
-#             else:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor): continue
-#                 else: found = False
-#         sides += count
+    # Run BFS for every point, find all the known points and add them all to each group if it hasn't been explored
+    for j in tqdm(range(len(grid.points))):
+        for i in range(len(grid.points[0])):
+            if not grid.points[j][i].explored:
+                group_points = dfs(grid, i, j)
+                groups.append(group_points)
 
+    areas = []
+    for group in groups:
+        areas.append(len(group))
 
-#     for j in range(height - 1, -1, -1):
-#         count, found = 0, False
-#         for i in range(width):
-#             point, neighbor = grid.points[j][i], None
-#             if (j + 1 < height): neighbor = grid.points[j + 1][i]
-#             if not found:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor):
-#                     found = True; count += 1
-#                 # else:
-#                 #     found = False; count += 1
-#             else:
-#                 if point.val == val and (point in group) and unrelated_neighbor(point, neighbor): continue
-#                 else: found = False
-#         sides += count
+    perimeters = []
+    for group in groups:
+        perimeters.append(calculate_perimeter(grid, group, height, width))
 
-#     # we may have continued until the end, so we should add to sides one more time
-#     return sides
+    return sum([s*m for s,m in zip(areas, perimeters)])
+```
 
+## Part 2:
+
+```python
 @timing
 def part2(fname):
 
@@ -296,6 +232,4 @@ def part2(fname):
         perimeters.append(calculate_sides(grid, group, height, width))
 
     return sum([s*m for s,m in zip(areas, perimeters)])
-
-if __name__ == "__main__":
-    main()
+```
