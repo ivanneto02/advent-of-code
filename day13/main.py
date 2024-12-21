@@ -1,4 +1,5 @@
 
+from os import umask
 import sys
 import time
 import re
@@ -42,17 +43,16 @@ def f(curr, goal, gmap):
     return g(curr, gmap) + h(curr, goal)
 
 # Credit: wikipedia
-def AStar(start, goal, A, B):
+def AStar(start, goal, A, B, p2=False):
 
     # Set of explored points so far
     explored = {} # will contain points (x, y)
 
     frontier_minh = []
     frontier_minhl = []
-    
+
     gmap = {}
     gmap[start] = 0
-
 
     heapq.heappush(frontier_minh, (0, start))
     heapq.heappush(frontier_minhl, (0, ''))
@@ -60,32 +60,37 @@ def AStar(start, goal, A, B):
     pressA = 0
     pressB = 0
 
-    while (frontier_minh and pressA <= 100 or pressB <= 100):
+    while (frontier_minh):
        
         # find the lowest f score value in the frontier
-        
         curr = heapq.heappop(frontier_minh)[1]
         button = heapq.heappop(frontier_minhl)[1]
 
+        # Calculate if we should stop early, we cannot go more than 100 pressA or 100 pressB
         if button == "A":
             pressA += 1
         elif button == "B":
             pressB += 1
-
+    
         # found the lowest score, now add to explored
         explored[curr] = True
-        
+
         # found the goal in the lowest node of the frontier!
         if curr == goal:
             return gmap[curr]
-
+        elif not p2:
+            if button == "A" and pressA > 20000:
+                continue
+            elif button == "B" and pressB > 20000:
+                continue
+        
         # now add neighbors to the frontier
         AState = ( curr[0] + A[0], curr[1] + A[1] )
         BState = ( curr[0] + B[0], curr[1] + B[1] )
 
         toAGScore = gmap[curr] + 3
         toBGScore = gmap[curr] + 1
-    
+
         # If we haven't seen AState or the alternative path is better
         if AState not in gmap or toAGScore < gmap[AState]:
             gmap[AState] = toAGScore
@@ -105,9 +110,6 @@ def AStar(start, goal, A, B):
 @timing
 def part1(fname):
     f = open(fname).read()
-
-    # WRONG - 28735
-    # WRONG - 21009
 
     number_regex = r"\d+"
 
@@ -135,16 +137,42 @@ def part1(fname):
 
         goal = (machine[2][0], machine[2][1])
         A, B = machine[0], machine[1]
-        costs.append(AStar((0, 0), goal, A, B))
+        costs.append(AStar((0, 0), goal, A, B, False))
 
     return sum(costs)
 
-
-
 @timing
 def part2(fname):
+    f = open(fname).read()
 
-    return 0
+    number_regex = r"\d+"
+
+    # separate machines
+    machines = []
+    for line in f.split("\n\n"):
+        machines.append(line)
+   
+    # clean up the input, get just the [ (A-X-Step, A-Y-Step), (B-X-Step, B-Y-Step), (X-Goal, Y-Goal) ] for each machine
+    machines_clean = []
+    for machine in machines:
+        Ax, Ay = map(int, re.findall(number_regex, machine.split("\n")[0]))
+        Bx, By = map(int, re.findall(number_regex, machine.split("\n")[1]))
+        Px, Py = map(int, re.findall(number_regex, machine.split("\n")[2]))
+
+        # Adding the cleaned up version to machines_clean
+        machines_clean.append( ( (Ax, Ay), (Bx, By), (Px + 10000000000000, Py + 10000000000000) ) )
+    
+    machines = machines_clean.copy()
+    
+    # Run AStar with each machine
+    costs = []
+    for machine in tqdm(machines):
+
+        goal = (machine[2][0], machine[2][1])
+        A, B = machine[0], machine[1]
+        costs.append(AStar((0, 0), goal, A, B, True) )
+
+    return sum(costs)
 
 if __name__ == "__main__":
     main()
