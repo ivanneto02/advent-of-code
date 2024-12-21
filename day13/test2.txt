@@ -1,0 +1,15 @@
+Button A: X+29, Y+71
+Button B: X+52, Y+31
+Prize: X=5388, Y=4716
+
+Button A: X+47, Y+16
+Button B: X+14, Y+21
+Prize: X=4795, Y=2996
+
+Button A: X+21, Y+11
+Button B: X+12, Y+60
+Prize: X=741, Y=2859
+
+Button A: X+61, Y+34
+Button B: X+17, Y+50
+Prize: X=2223, Y=12510
