@@ -119,11 +119,19 @@ For part 2, it was similar, except now we are using my utility `calculate_sides(
 
 I think the difficulty in today was the edge cases...
 
+# Day 13:
+
+This problem was tough for me. Originally, I planned to create an A* based solution where the algorithm finds the shortest path between the initial state (0, 0), and the final state, which is the goal. This approach did not work, and instead I opted to solve a system of equations in the form `a * AXS + b * BXS = GoalX` and `a * AYS + b * BYS = GoalY`. By solving the system, we can do both of the following:
+
+1. Find the lowest amount of tokens needed to get from the initial state to the goal
+2. Check whether `a` and `b` are actually integers, thereby ensuring there exists a solution. If we have a solution where either `a` or `b` are not integers, then we know there is no way to get to the goal state from the start state.
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+ 13       >24h  46039      0       >24h  41651      0
  12   02:58:33  11983      0   04:46:49   8154      0
  11   01:57:30  13577      0   05:37:54  16298      0
  10   04:45:43  19265      0   04:56:24  18547      0
@@ -136,4 +144,4 @@ Day       Time   Rank  Score       Time   Rank  Score
   3   00:10:05   4212      0   02:18:46  18641      0
   2   00:18:17   6285      0   00:36:39   5637      0
   1   00:11:44   4791      0   00:29:48   6691      0
-```
+``` 

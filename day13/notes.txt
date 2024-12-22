@@ -1,0 +1,11 @@
+a * AXS + b * BXS = GX
+a * AYS + b * BYS = GY
+
+a * AXS = GX - b * BXS
+a = ( GX - b * BXS ) / AXS
+
+# plug back in
+((GX - b * BXS) / AXS) * AYS + b * BYS = GY
+GX * AYS/ AXS - b * BXS * AYS / AXS + b * BYS = GY
+- b * BXS * AYS / AXS + b * BYS = GY - GX * AYS/AXS
+( GY - GX * AYS/AXS ) / (- BXS * AYS / AXS + BYS) = b

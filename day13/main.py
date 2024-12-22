@@ -1,9 +1,6 @@
-
-from os import umask
 import sys
 import time
 import re
-from tqdm import tqdm
 import heapq
 
 def timing(func):
@@ -30,83 +27,6 @@ def main():
 
     return 0
 
-# Heuristic is Euclidean distance
-def h(curr, goal):
-    Cx, Cy = curr[0], curr[1]
-    Gx, Gy = goal[0], goal[1]
-    return pow( (Cx - Gx)**2 + (Cy - Gy)**2, 1/2 )
-
-def g(curr, gmap):
-    return gmap[curr]
-
-def f(curr, goal, gmap):
-    return g(curr, gmap) + h(curr, goal)
-
-# Credit: wikipedia
-def AStar(start, goal, A, B, p2=False):
-
-    # Set of explored points so far
-    explored = {} # will contain points (x, y)
-
-    frontier_minh = []
-    frontier_minhl = []
-
-    gmap = {}
-    gmap[start] = 0
-
-    heapq.heappush(frontier_minh, (0, start))
-    heapq.heappush(frontier_minhl, (0, ''))
-
-    pressA = 0
-    pressB = 0
-
-    while (frontier_minh):
-       
-        # find the lowest f score value in the frontier
-        curr = heapq.heappop(frontier_minh)[1]
-        button = heapq.heappop(frontier_minhl)[1]
-
-        # Calculate if we should stop early, we cannot go more than 100 pressA or 100 pressB
-        if button == "A":
-            pressA += 1
-        elif button == "B":
-            pressB += 1
-    
-        # found the lowest score, now add to explored
-        explored[curr] = True
-
-        # found the goal in the lowest node of the frontier!
-        if curr == goal:
-            return gmap[curr]
-        elif not p2:
-            if button == "A" and pressA > 20000:
-                continue
-            elif button == "B" and pressB > 20000:
-                continue
-        
-        # now add neighbors to the frontier
-        AState = ( curr[0] + A[0], curr[1] + A[1] )
-        BState = ( curr[0] + B[0], curr[1] + B[1] )
-
-        toAGScore = gmap[curr] + 3
-        toBGScore = gmap[curr] + 1
-
-        # If we haven't seen AState or the alternative path is better
-        if AState not in gmap or toAGScore < gmap[AState]:
-            gmap[AState] = toAGScore
-            if AState not in explored:
-                heapq.heappush(frontier_minh, (f(AState, goal, gmap), AState))
-                heapq.heappush(frontier_minhl, (f(AState, goal, gmap), "A"))
-
-        # If we haven't seen BState or the alternative path is better
-        if BState not in gmap or toBGScore < gmap[BState]:
-            gmap[BState] = toBGScore
-            if BState not in explored:
-                heapq.heappush(frontier_minh, (f(BState, goal, gmap), BState))
-                heapq.heappush(frontier_minhl, (f(BState, goal, gmap), "B"))
-
-    return 0
-
 @timing
 def part1(fname):
     f = open(fname).read()
@@ -123,23 +43,35 @@ def part1(fname):
     for machine in machines:
         Ax, Ay = map(int, re.findall(number_regex, machine.split("\n")[0]))
         Bx, By = map(int, re.findall(number_regex, machine.split("\n")[1]))
-        Px, Py = map(int, re.findall(number_regex, machine.split("\n")[2]))
-       
+        Px, Py = map(int, re.findall(number_regex, machine.split("\n")[2]))   
 
-        # Adding the cleaned up version to machines_clean
         machines_clean.append( ( (Ax, Ay), (Bx, By), (Px, Py) ) )
-    
+
     machines = machines_clean.copy()
-    
-    # Run AStar with each machine
-    costs = []
-    for machine in tqdm(machines):
 
-        goal = (machine[2][0], machine[2][1])
-        A, B = machine[0], machine[1]
-        costs.append(AStar((0, 0), goal, A, B, False))
+    tokens = []
+    for machine in machines:
+       
+        # Abbreviated variables for equation solution
+        AXS = machine[0][0] 
+        AYS = machine[0][1]
+        
+        BXS = machine[1][0]
+        BYS = machine[1][1]
 
-    return sum(costs)
+        GX = machine[2][0]
+        GY = machine[2][1]
+
+        # Result of solving system of equations a * AXS + b * BXS = GX
+        #                                   and a * AYS + b * BYS = GY
+        b = (GY - GX * AYS / AXS) / (((-1 * BXS) * (AYS / AXS)) + BYS)
+        a = (GX - b * BXS) / (AXS)
+
+        # Check if result of a and b are close enough to integers
+        if round(a, 3).is_integer() and round(b, 3).is_integer():
+            tokens.append(a * 3 + b * 1)
+
+    return int(sum(tokens))
 
 @timing
 def part2(fname):
@@ -157,22 +89,35 @@ def part2(fname):
     for machine in machines:
         Ax, Ay = map(int, re.findall(number_regex, machine.split("\n")[0]))
         Bx, By = map(int, re.findall(number_regex, machine.split("\n")[1]))
-        Px, Py = map(int, re.findall(number_regex, machine.split("\n")[2]))
+        Px, Py = map(int, re.findall(number_regex, machine.split("\n")[2]))   
 
-        # Adding the cleaned up version to machines_clean
         machines_clean.append( ( (Ax, Ay), (Bx, By), (Px + 10000000000000, Py + 10000000000000) ) )
-    
+
     machines = machines_clean.copy()
-    
-    # Run AStar with each machine
-    costs = []
-    for machine in tqdm(machines):
 
-        goal = (machine[2][0], machine[2][1])
-        A, B = machine[0], machine[1]
-        costs.append(AStar((0, 0), goal, A, B, True) )
+    tokens = []
+    for machine in machines:
+       
+        # Abbreviated variables for equation solution
+        AXS = machine[0][0] 
+        AYS = machine[0][1]
+        
+        BXS = machine[1][0]
+        BYS = machine[1][1]
 
-    return sum(costs)
+        GX = machine[2][0]
+        GY = machine[2][1]
+
+        # Result of solving system of equations a * AXS + b * BXS = GX
+        #                                   and a * AYS + b * BYS = GY
+        b = (GY - GX * AYS / AXS) / (((-1 * BXS) * (AYS / AXS)) + BYS)
+        a = (GX - b * BXS) / (AXS)
+
+        # Check if result of a and b are close enough to integers
+        if round(a, 3).is_integer() and round(b, 3).is_integer():
+            tokens.append(a * 3 + b * 1)
+
+    return int(sum(tokens))
 
 if __name__ == "__main__":
     main()
