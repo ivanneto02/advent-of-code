@@ -1,30 +1,58 @@
-import sys
-import time
-from utils import *
 
-def timing(func):
-    def wrapper(*arg, **kw):
-        t1 = time.time()
-        result = func(*arg, **kw)
-        t2 = time.time()
-        return (t2 - t1), result, func.__name__
-    return wrapper
+# Takes the regular state and makes a widened version of it,
+# by extending every character by its defined wide version. Then,
+# re-grid the state by combining all the characters and splitting them
+# into a list
+def widen_state(state, width, height):
 
-def main():
+    # replace each character with its widened form
+    for j in range(height):
+        for i in range(width):
+            char = state[j][i]
+            if char == "@":
+                state[j][i] = "@."
+            elif char == "O":
+                state[j][i] = "[]"
+            elif char == "#":
+                state[j][i] = "##"
+            elif char == ".":
+                state[j][i] = ".."
 
-    n = len(sys.argv)
+    # now re-split each string to make grid of characters
+    return [ list("".join(x)) for x in state ]
 
-    fname = "test.txt"
-    if n > 1:
-        fname = sys.argv[1]
+"""
+All wide_ utilities apply for part 2 of day 15. It is used for when
+we widen the grid.
+"""
+def wide_move_left(state, robot_pos):    
+    return state, robot_pos
+def wide_move_up(state, robot_pos):
+    return state, robot_pos
 
-    p1 = part1(fname)
-    p2 = part2(fname)
+def wide_move_right(state, robot_pos):
+    return state, robot_pos
+def wide_move_down(state, robot_pos):
+    return state, robot_pos
 
-    print(f"Part 1: {p1[1]} ({p1[0]*1000:.4f}ms)")
-    print(f"Part 2: {p2[1]} ({p2[0]*1000:.4f}ms)")
+def wide_make_robot_move(state, move, robot_pos, width, height):
+    if move == "<":
+        return wide_move_left(state, robot_pos)
+    
+    if move == "^":
+        return wide_move_up(state, robot_pos)
+
+    if move == ">":
+        return wide_move_right(state, robot_pos)
+
+    if move == "v":
+        return wide_move_right(state, robot_pos)
+
+    # should not get here
+    return state, robot_pos
 
 # Use state to find the robot
+# Also applies for wide part 2
 def get_initial_robot__pos(state, width, height):
     for j in range(0, height):
         for i in range(0, width):
@@ -169,40 +197,3 @@ def make_robot_move(state, move, robot_pos, width, height):
 
     # should not get here
     return (state, robot_pos)
-
-@timing
-def part1(fname):
-
-    f = open(fname).read()
-
-    inputs = f.split("\n\n")
-
-    state = inputs[0]
-    state = [ list(x) for x in state.split("\n") ] # griddy on the state
-
-    width = len(state[0])
-    height = len(state)
-
-    moves = inputs[1].strip()
-
-    robot_pos = get_initial_robot__pos(state, width, height)
-
-    for move in moves:
-        state, robot_pos = make_robot_move(state, move, robot_pos, width, height)
-
-    sum = 0
-    # count the coordinates
-    for j in range(height):
-        for i in range(width):
-            if state[j][i] == "O":
-                sum += 100 * (j) + i 
-
-    return sum
-
-@timing
-def part2(fname):
-    return 0
-
-
-if __name__ == "__main__":
-    main()

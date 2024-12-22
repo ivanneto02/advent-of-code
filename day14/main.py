@@ -1,7 +1,6 @@
 import sys
 import time
 import re
-import unittest
 
 def timing(func):
     def wrapper(*arg, **kw):
