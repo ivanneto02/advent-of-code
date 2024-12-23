@@ -176,11 +176,23 @@ t = 7412s
 ....................1...........................................
 ```
 
+# Day 15 :anger: :pensive: :persevere: :relieved:
+
+Part 1 was not terribly difficult. There were some edge cases to be aware of, such as pushing multiple boxes at once. The code was not too difficult for this.
+    
+Where day 15 got really hard was on part 2, dealing with moving multiple boxes at once that all influence each other and may collide with the boundary.
+Coding this feature was very difficult for me, as I am not used to dealing with many edge cases. I settled on a recursive solution where we use postOrdertraversal
+traversal to propagate the movement of all the boxes after checking if they do not collide with the boundary. To achieve this, I had to create a testing suite
+foundfound [here](./day15/test.py). Overall, this was probably the most difficult day for me because of the sheer number of edge cases. However, since I
+had a suite that covers basically all cases, I was not too unhappy throughout the process. I was able to quickly correct the code when problems
+arose with the test cases.
+
 # Timekeeping
 
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+ 15       >24h  39462      0       >24h  30345      0
  14       >24h  44142      0       >24h  39683      0
  13       >24h  46039      0       >24h  41651      0
  12   02:58:33  11983      0   04:46:49   8154      0
