@@ -19,7 +19,7 @@ def widen_state(state, width, height):
                 state[j][i] = ".."
 
     # now re-split each string to make grid of characters
-    return [ list("".join(x)) for x in state ]
+    return [ list("".join(x)) for x in state ], width*2, height*2
 
 """
 All wide_ utilities apply for part 2 of day 15. It is used for when
@@ -53,7 +53,7 @@ def wide_make_robot_move(state, move, robot_pos, width, height):
 
 # Use state to find the robot
 # Also applies for wide part 2
-def get_initial_robot__pos(state, width, height):
+def get_initial_robot_pos(state, width, height):
     for j in range(0, height):
         for i in range(0, width):
             if state[j][i] == "@":
@@ -63,7 +63,7 @@ def get_initial_robot__pos(state, width, height):
 # defines left movement 
 def move_left(state, robot_pos):
     x, y = robot_pos
-
+    
     # check if we have a simple move
     if state[y][x-1] == ".":
         state[y][x] = "."
