@@ -88,12 +88,36 @@ def AStar(state, start, goal):
                 heapq.heappush((f(gmap, curr, goal) , (x-1, y)))
 
         if explore_north:
-
+            toScore = gmap[curr] + 1
+            if (x, y+1) not in gmap or toScore < gmap[(x, y+1)]: # found more optimal path
+                from_map[(x, y+1)] = curr
+                gmap[(x, y+1)] = toScore
+                heapq.heappush((f(gmap, curr, goal) , (x, y+1)))
 
         if explore_west:
-
+            toScore = gmap[curr] + 1
+            if (x+1, y) not in gmap or toScore < gmap[(x+1, y)]: # found more optimal path
+                from_map[(x+1, y)] = curr
+                gmap[(x+1, y)] = toScore
+                heapq.heappush((f(gmap, curr, goal) , (x+1, y)))
 
         if explore_south:
+            toScore = gmap[curr] + 1
+            if (x, y-1) not in gmap or toScore < gmap[(x, y-1)]: # found more optimal path
+                from_map[(x, y-1)] = curr
+                gmap[(x, y-1)] = toScore
+                heapq.heappush((f(gmap, curr, goal) , (x, y-1)))
+
+def get_stard_end_pos(state, width, height):
+    spos = (0, 0)
+    epos = (0, 0)
+    for j in range(height):
+        for i in range(width):
+            if state[j][i] == "S":
+                spos = (i, j)
+            elif state[j][i] == "E":
+                epos = (i, j)
+    return spos, epos
 
 """
 Strategy: use AStar for lowest cost path finding, then use the reconstructed path to calculate the score by using the equation
@@ -102,7 +126,10 @@ number_of_moves + 1000*number_of_turns
 @timing
 def part1(fname):
     
+    f = open(fname).read()
+
     
+
     
     return 0
 
