@@ -26,9 +26,9 @@ def main():
 
     # Part 2 movement
     suite.addTest(unittest.makeSuite(TestWideMoveLeft))
-    # suite.addTest(unittest.makeSuite(TestWideMoveUp))
+    suite.addTest(unittest.makeSuite(TestWideMoveUp))
     suite.addTest(unittest.makeSuite(TestWideMoveRight))
-    # suite.addTest(unittest.makeSuite(TestWideMoveDown))
+    suite.addTest(unittest.makeSuite(TestWideMoveDown))
 
     # Part 2 utility
     suite.addTest(unittest.makeSuite(TestPropagation))

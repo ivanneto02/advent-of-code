@@ -1,6 +1,9 @@
 import sys
 import time
-from utils import *
+from utils import get_initial_robot_pos
+from utils import make_robot_move
+from utils import wide_make_robot_move
+from utils import widen_state
 
 def timing(func):
     def wrapper(*arg, **kw):
@@ -65,6 +68,8 @@ def part2(fname):
     width = len(state[0])
     height = len(state)
 
+    state, width, height = widen_state(state, width, height)
+
     moves = inputs[1].strip()
 
     robot_pos = get_initial_robot_pos(state, width, height)
@@ -76,7 +81,7 @@ def part2(fname):
     # count the coordinates
     for j in range(height):
         for i in range(width):
-            if state[j][i] == "O":
+            if state[j][i] == "[":
                 sum += 100 * (j) + i 
 
     return sum

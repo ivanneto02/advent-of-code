@@ -19,7 +19,7 @@ def widen_state(state, width, height):
                 state[j][i] = ".."
 
     # now re-split each string to make grid of characters
-    return [ list("".join(x)) for x in state ], width*2, height*2
+    return [ list("".join(x)) for x in state ], width*2, height
 
 """
 All wide_ utilities apply for part 2 of day 15. It is used for when
@@ -90,16 +90,53 @@ def propagate_push_up(state, box_pos):
     if (state[y-1][x+1] == "["):
         return propagate_push_up(state, (x+1, y-1))
 
-    print("case not caught")
     # we should not get here
     return state, box_pos
+
+# postorder traversal to move the boxes up
+def move_boxes_up(state, box_pos):
+    x, y = box_pos
+
+    # base case, there is ONLY space above the box, could move section
+    # we must return a 1 for this particular branch
+    if (state[y-1][x] == ".") and (state[y-1][x+1] == "."):
+        state[y-1][x] = "["
+        state[y-1][x+1] = "]"
+        state[y][x] = "."
+        state[y][x+1] = "."
+        return state, (x, y)
+
+    # recursive case where we have two boxes
+    elif state[y-1][x] == "]" and state[y-1][x+1] == "[":
+        state, _ = move_boxes_up(state, (x-1, y-1))
+        state, _ = move_boxes_up(state, (x+1, y-1))
+        
+    # recursive case where we only have one box on left side
+    elif (state[y-1][x] == "]"):
+        # if next propagation doesn't return a state we are safe
+        state, _ = move_boxes_up(state, (x-1, y-1))
+
+    # recursive case where we only have one box exactly in the middle
+    elif (state[y-1][x] == "["):
+        state, _ = move_boxes_up(state, (x, y-1))
+
+    # recursive case where we only have one box on the right side
+    elif (state[y-1][x+1] == "["):
+        state, _ = move_boxes_up(state, (x+1, y-1))
+
+    state[y-1][x] = "["
+    state[y-1][x+1] = "]"
+    state[y][x] = "."
+    state[y][x+1] = "."
+
+    return state, _
 
 def wide_move_up(state, robot_pos):
     x, y = robot_pos
 
     # check if we have a simple move
-    if state[y+1][x] == ".":
-        state[y+1][x] = "@"
+    if state[y-1][x] == ".":
+        state[y-1][x] = "@"
         state[y][x] = "."
         return state, (x, y-1)
 
@@ -108,19 +145,134 @@ def wide_move_up(state, robot_pos):
         
         box_pos = (0,0)
         if state[y-1][x] == "[":
-            box_pos = (y-1, x)
+            box_pos = (x, y - 1)
         elif state[y-1][x] == "]":
-            box_pos = (y-1, x-1)
-            
+            box_pos = (x-1, y-1)
+          
         # we were not able to move the boxes up because of a boundary in the way
-        if (propagate_push_up(state, box_pos) == -1):
+        if (propagate_push_up(state, box_pos) == 0):
             return state, (x, y)
         
+        # we can propagate, so we should move all states recursively!
+        state, _ = move_boxes_up(state, box_pos)
+
         # propagating would either return -1 when unable to propagate and do nothing, OR
         # return 0 and be able to propagate. It does the work for us.
-        state[x][y-1] = "@"
+        state[y-1][x] = "@"
+        state[y][x] = "."
+
         return state, (x, y-1)
 
+    return state, robot_pos
+
+# Causes each push to recursively propagate to each box on each
+# side of the main box being pushed. It will be called on the
+# box that is being pushed by the robot. The movement function
+# is in charge of moving the robot itself.
+def propagate_push_down(state, box_pos):
+    x, y = box_pos
+
+    # base case, there is ONLY space above the box, could move section
+    # we must return a 1 for this particular branch
+    if (state[y+1][x] == ".") and (state[y+1][x+1] == "."):
+        return 1
+
+    # base case, there is a # above the box, cannot move this box, must
+    # propagate return value down to intial box
+    if (state[y+1][x] == "#" or state[y+1][x+1] == "#"):
+        return 0
+
+    # recursive case where we have two boxes
+    if state[y+1][x] == "]" and state[y+1][x+1] == "[":
+        return int(propagate_push_down(state, (x-1, y+1)) 
+            and propagate_push_down(state, (x+1, y+1)))
+    
+    # recursive case where we only have one box on left side
+    if (state[y+1][x] == "]"):
+        # if next propagation doesn't return a state we are safe
+        return propagate_push_down(state, (x-1, y+1))
+
+    # recursive case where we only have one box exactly in the middle
+    if (state[y+1][x] == "["):
+        return propagate_push_down(state, (x, y+1))
+
+    # recursive case where we only have one box on the right side
+    if (state[y+1][x+1] == "["):
+        return propagate_push_down(state, (x+1, y+1))
+
+    # we should not get here
+    return state, box_pos
+
+# postorder traversal to move the boxes up
+def move_boxes_down(state, box_pos):
+    x, y = box_pos
+
+    # base case, there is ONLY space above the box, could move section
+    # we must return a 1 for this particular branch
+    if (state[y+1][x] == ".") and (state[y+1][x+1] == "."):
+        state[y+1][x] = "["
+        state[y+1][x+1] = "]"
+        state[y][x] = "."
+        state[y][x+1] = "."
+        return state, (x, y)
+
+    # recursive case where we have two boxes
+    elif state[y+1][x] == "]" and state[y+1][x+1] == "[":
+        state, box_pos = move_boxes_down(state, (x-1, y+1))
+        state, box_pos = move_boxes_down(state, (x+1, y+1))
+        
+    # recursive case where we only have one box on left side
+    elif (state[y+1][x] == "]"):
+        # if next propagation doesn't return a state we are safe
+        state, box_pos = move_boxes_down(state, (x-1, y+1))
+
+    # recursive case where we only have one box exactly in the middle
+    elif (state[y+1][x] == "["):
+        state, box_pos = move_boxes_down(state, (x, y+1))
+
+    # recursive case where we only have one box on the right side
+    elif (state[y+1][x+1] == "["):
+        state, box_pos = move_boxes_down(state, (x+1, y+1))
+
+    state[y+1][x] = "["
+    state[y+1][x+1] = "]"
+    state[y][x] = "."
+    state[y][x+1] = "."
+
+    return state, box_pos
+
+def wide_move_down(state, robot_pos):
+    x, y = robot_pos
+
+    # check if we have a simple move
+    if state[y+1][x] == ".":
+        state[y+1][x] = "@"
+        state[y][x] = "."
+        return state, (x, y+1)
+
+    # complex move, we may stay in place or move boxes!
+    if state[y+1][x] == "[" or state[y+1][x] == "]":
+        
+        box_pos = (0,0)
+        if state[y+1][x] == "[":
+            box_pos = (x, y + 1)
+        elif state[y+1][x] == "]":
+            box_pos = (x-1, y+1)
+          
+        # we were not able to move the boxes up because of a boundary in the way
+        if (propagate_push_down(state, box_pos) == 0):
+            return state, (x, y)
+        
+        # we can propagate, so we should move all states recursively!
+        state, _ = move_boxes_down(state, box_pos)
+
+        # propagating would either return -1 when unable to propagate and do nothing, OR
+        # return 0 and be able to propagate. It does the work for us.
+        state[y+1][x] = "@"
+        state[y][x] = "."
+        return state, (x, y+1)
+
+    # the case where we hit bounds, we should not move
     return state, robot_pos
 
 def wide_move_right(state, robot_pos):
@@ -152,8 +304,6 @@ def wide_move_right(state, robot_pos):
 
     # case where we have #@
     return state, robot_pos
-def wide_move_down(state, robot_pos):
-    return state, robot_pos
 
 def wide_make_robot_move(state, move, robot_pos, width, height):
     if move == "<":
@@ -166,7 +316,7 @@ def wide_make_robot_move(state, move, robot_pos, width, height):
         return wide_move_right(state, robot_pos)
 
     if move == "v":
-        return wide_move_right(state, robot_pos)
+        return wide_move_down(state, robot_pos)
 
     # should not get here
     return state, robot_pos
