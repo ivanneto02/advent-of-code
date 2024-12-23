@@ -11,6 +11,7 @@ from test_wide import TestWideMoveLeft
 from test_wide import TestWideMoveUp
 from test_wide import TestWideMoveRight
 from test_wide import TestWideMoveDown
+from test_wide import TestPropagation
 
 def main():
 
@@ -24,8 +25,13 @@ def main():
     suite.addTest(unittest.makeSuite(TestMoveDown))
 
     # Part 2 movement
+    suite.addTest(unittest.makeSuite(TestWideMoveLeft))
+    # suite.addTest(unittest.makeSuite(TestWideMoveUp))
+    suite.addTest(unittest.makeSuite(TestWideMoveRight))
+    # suite.addTest(unittest.makeSuite(TestWideMoveDown))
 
     # Part 2 utility
+    suite.addTest(unittest.makeSuite(TestPropagation))
     suite.addTest(unittest.makeSuite(TestWidenState))
 
     # Common
