@@ -1,3 +1,4 @@
+from os import altsep
 import sys
 import time
 import heapq
@@ -160,107 +161,72 @@ def pop_all_smallest(frontier):
 
     return smallest_list
 
+def opposite_direction(direction):
+    if direction == "W":
+        return "E"
+    elif direction == "E":
+        return "W"
+    elif direction == "N":
+        return "S"
+    else:
+        return "N"
+
+def detect_turn(direction, move):
+    if direction == "S" or direction == "N":
+        return move == "W" or move == "E"
+    else:
+        return move == "S" or move == "N"
+
 # Modification of dijkstra to output ALL possible paths between two nodes
-def dijkstra(state, start, end):
+def bfs(state, start, end):
+
     dist = {}
-    from_map = {}
+    prev = {}
     frontier = []
     explored = {}
     
-    heapq.heappush(frontier, (0, (start, start)))
     dist[start] = 0
 
-    # print("test")
+    heapq.heappush(frontier, (0, start, start))
+    
     while frontier:
 
-        # print(frontier)
-        curr_list = pop_all_smallest(frontier) 
-        # print("popping")
-        # for c in curr_list:
-        #     print(f"c: {c}")
-        # # print("c: ", curr_list)
-        # print("")
+        d, l, u = heapq.heappop(frontier)
+        x, y = u
 
-        for i, popped in enumerate(curr_list):
-    
-            curr = popped[1][1]
-            last = popped[1][0]
+        if l == u:
+            move = "E"
+        else:
+            move = get_direction(l, u)
 
-            x, y = curr
-            explored[last, curr] = True
-            explored[curr, last] = True
-            # print(f"exploring {last}->{curr}")
+        if (l, u) in explored:
+            continue
 
-            # explore neighbors if possible
-            explore_east  = state[y][x+1] != "#" and ((x+1, y), curr) not in explored# and (curr, (x+1, y)) not in explored
-            explore_north = state[y-1][x] != "#" and ((x, y-1), curr) not in explored# and (curr, (x, y-1)) not in explored
-            explore_west  = state[y][x-1] != "#" and ((x-1, y), curr) not in explored# and (curr, (x-1, y)) not in explored
-            explore_south = state[y+1][x] != "#" and ((x, y+1), curr) not in explored# and (curr, (x, y+1)) not in explored
+        explored[l, u] = True
+        explored[u, l] = True
+
+        for direction, next in zip(["E", "N", "W", "S"], [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]):
             
-            # check direction based on where curr is coming from!
-            if (curr == start):
-                direction = "E"
-            else:
-                direction = get_direction(last, curr)
+            if (u, next) in explored or (next, u) in explored:
+                continue
+            
+            nx, ny = next
+            if state[ny][nx] == "#":
+                continue
 
-            if explore_east:
-                toScore = dist[curr] + 1
-                if direction == "N" or direction == "S":
-                    toScore += 1000
-                if (x+1, y) not in dist or toScore <= dist[(x+1, y)]: # found more optimal path
-                    if (x+1, y) not in from_map:
-                        from_map[(x+1, y)] = [curr]
-                    else:
-                        from_map[(x+1, y)].append(curr)
-                    dist[(x+1, y)] = toScore
-                    if direction == "N" or direction == "S":
-                        dist[(x, y)] = toScore - 1
-                    heapq.heappush(frontier, (toScore, (curr, (x+1, y))))
+            cost = 1
 
-            if explore_north:
-                toScore = dist[curr] + 1
-                if direction == "E" or direction == "W":
-                    toScore += 1000
-                if (x, y-1) not in dist or toScore <= dist[(x, y-1)]: # found more optimal path
-                    if (x, y-1) not in from_map:
-                        from_map[(x, y-1)] = [curr]
-                    else:
-                        from_map[(x, y-1)].append(curr)
-                    dist[(x, y-1)] = toScore
-                    if direction == "E" or direction == "W":
-                        dist[(x, y)] = toScore - 1
-                    heapq.heappush(frontier, (toScore, (curr, (x, y-1))))
+            alt = dist[u] + cost
 
-            if explore_west:
-                toScore = dist[curr] + 1                
-                if direction == "N" or direction == "S":
-                    toScore += 1000
-                if (x-1, y) not in dist or toScore <= dist[(x-1, y)]: # found more optimal path
-                    if (x-1, y) not in from_map:
-                        from_map[(x-1, y)] = [curr]
-                    else:
-                        from_map[(x-1, y)].append(curr)
-                    dist[(x-1, y)] = toScore
-                    if direction == "N" or direction == "S":
-                        dist[(x, y)] = toScore - 1
-                    heapq.heappush(frontier, (toScore, (curr, (x-1, y))))
+            if next not in dist or alt <= dist[next]:
+                heapq.heappush(frontier, (alt, u, next))
+                dist[next] = alt
+                if next not in prev:
+                    prev[next] = [u]
+                else:
+                    prev[next].append(u)
 
-            if explore_south:
-                toScore = dist[curr] + 1
-                if direction == "E" or direction == "W":
-                    toScore += 1000
-                if (x, y+1) not in dist or toScore <= dist[(x, y+1)]: # found more optimal path
-                    if (x, y+1) not in from_map:
-                        from_map[(x, y+1)] = [curr]
-                    else:
-                        from_map[(x, y+1)].append(curr)
-                    dist[(x, y+1)] = toScore
-                    if direction == "E" or direction == "W":
-                        dist[(x, y)] = toScore - 1
-                    heapq.heappush(frontier, (toScore, (curr, (x, y+1))))
-
-    return from_map 
-
+    return prev, dist
 
 def get_start_end_pos(state, width, height):
     spos = (0, 0)
@@ -273,35 +239,32 @@ def get_start_end_pos(state, width, height):
                 epos = (i, j)
     return spos, epos
 
+def get_smallest_neighbors(curr, from_map, dist):
+    distances = []
+    for direction in ["E", "N", "W", "S"]:
+        if (curr, direction) in dist:
+            distances += [dist[(curr, direction)]]
+
+    min_dist = min(distances)
+
+    neighbors = []
+    for direction in ["E", "N", "W", "S"]:
+        if (curr, direction) in from_map:
+            neighbors += [from_map[(curr, direction)]]
+
+    return neighbors
+
 # breadth-first-search my acyclic graph to count the nodes!
-def count_spots(from_map, start):
+def find_all_paths(start, curr, from_map):
+    if start == curr:
+        return [start]
+    else:
+        path = [curr]
+        for parent in from_map[curr]:
+            path += find_all_paths(start, parent, from_map)
+        return path
 
-    frontier = []
-    explored = {}
-    frontier.insert(0, start)
-    count = 0
-    spots = []
-    
-    while frontier:
-        # grab last element, pop it out
-        curr = frontier.pop()
-        count += 1
-        spots += [curr]
-       
-        if curr not in from_map:
-            break
-
-        # all the neighbors
-        for neighbor in from_map[curr]:
-
-            # only will visit if it hasn't been explored already
-            if neighbor not in explored:
-                explored[neighbor] = True
-                frontier.insert(0, neighbor)
-
-    return count, spots
-
-"""
+        """
 Strategy: use AStar for lowest cost path finding, then use the reconstructed path to calculate the score by using the equation
 number_of_moves + 1000*number_of_turns
 """
@@ -323,6 +286,7 @@ def part1(fname):
 # TOO LOW - 428
 # TOO LOW - 433
 # TOO HIGH - 871
+# TOO HIGH - 883
 @timing
 def part2(fname):
     f = open(fname).read().strip()
@@ -335,25 +299,41 @@ def part2(fname):
     
     print(start, goal)
     
-    from_map = dijkstra(state, start, goal)
+    prev, dist = bfs(state, start, goal)
+  
 
-    # traversed = traversed_state(state, count_spots(from_map, start, goal))
-    
-    # print("   " + "".join([str(i) for i in range(10)]))
+    # print(dist[((5, 7), "N")])
+
+    # print(from_map)
+    # print(dist)
+
+    total_paths = find_all_paths(start, goal, prev)
+
+    for path in total_paths:
+        print(path)
+
+    # spots2 = [start]
+    # curr = goal
+    # while curr != start:
+    #     spots2 += [curr]
+    #     curr = prev[curr]
+
+    for path in total_paths:
+        traversed = traversed_state(state, list(set(path)))
+        
+        print("   " + "".join([str(i) for i in range(10)])*2)
+        for i, s in enumerate(traversed):
+            print(f"{i:<2} " + "".join(s))
+        print("   " + "".join([str(i) for i in range(10)])*2)
+     
+    # traversed = traversed_state(state, spots)
+
     # for i, s in enumerate(traversed):
-    #     print(f"{i:<2} " + "".join(s))
-    # print("   " + "".join([str(i) for i in range(10)]))
-    
-    count, spots = count_spots(from_map, goal)
+    #     print("".join(s))
 
-    traversed = traversed_state(state, spots)
+    # print(len(set(spots)))
 
-    for i, s in enumerate(traversed):
-        print("".join(s))
-
-    print(len(set(spots)))
- 
-    return count
+    return 0
 
 if __name__ == "__main__":
     main()
